@@ -1,2 +1,2 @@
 # projectJava
-Laboratory works on Java 
+Laboratory works 
