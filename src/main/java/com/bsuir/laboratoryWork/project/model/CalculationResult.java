@@ -7,6 +7,14 @@ public class CalculationResult {
         this.perimeter = perimeter;
         this.square = square;
     }
+    public CalculationResult(){
+        this.perimeter = this.square = null;
+    }
+
+    @Override
+    public String toString() {
+        return ("(perimeter = " + perimeter + "; square = " + square + ')');
+    }
 
     public String getPerimeter() {
         return perimeter;

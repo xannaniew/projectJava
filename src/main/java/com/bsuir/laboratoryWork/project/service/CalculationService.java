@@ -1,22 +1,21 @@
 package com.bsuir.laboratoryWork.project.service;
 
 import com.bsuir.laboratoryWork.project.exceptions.InvalidParametersException;
+import com.bsuir.laboratoryWork.project.model.ParametersKey;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.annotation.RequestScope;
 
 @Service
-@RequestScope
 public class CalculationService {
-    public String calcPerimeter(String length, String height) throws NumberFormatException{
-        if(Integer.parseInt(length) <= 0 || Integer.parseInt(height) <=0)
+    public String calcPerimeter(ParametersKey parametersKey) throws NumberFormatException{
+        if(Integer.parseInt(parametersKey.getLength()) <= 0 || Integer.parseInt(parametersKey.getHeight()) <=0)
             throw new InvalidParametersException("length/height cannot be lower or equal to zero");
-        int perimeter = 2 * Integer.parseInt(length) + 2 * Integer.parseInt(height);
+        int perimeter = 2 * Integer.parseInt(parametersKey.getLength()) + 2 * Integer.parseInt(parametersKey.getHeight());
         return Integer.toString(perimeter);
     }
-    public String calcSquare(String length, String height) throws NumberFormatException{
-        if(Integer.parseInt(length) <= 0 || Integer.parseInt(height) <=0)
+    public String calcSquare(ParametersKey parametersKey) throws NumberFormatException{
+        if(Integer.parseInt(parametersKey.getLength()) <= 0 || Integer.parseInt(parametersKey.getHeight()) <=0)
             throw new InvalidParametersException("length/height cannot be lower or equal to zero");
-        int square = Integer.parseInt(length) * Integer.parseInt(height);
+        int square = Integer.parseInt(parametersKey.getLength()) * Integer.parseInt(parametersKey.getHeight());
         return Integer.toString(square);
     }
 }
