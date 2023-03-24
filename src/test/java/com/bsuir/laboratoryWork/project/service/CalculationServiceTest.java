@@ -1,7 +1,7 @@
-package com.bsuir.laboratoryWork.project.model;
+package com.bsuir.laboratoryWork.project.service;
 
 import com.bsuir.laboratoryWork.project.exceptions.InvalidParametersException;
-import com.bsuir.laboratoryWork.project.service.CalculationService;
+import com.bsuir.laboratoryWork.project.model.ParametersKey;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

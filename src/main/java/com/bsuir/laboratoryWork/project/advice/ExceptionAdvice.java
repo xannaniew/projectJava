@@ -11,9 +11,9 @@ import java.util.logging.Logger;
 
 @RestControllerAdvice
 public class ExceptionAdvice {
-    private static Logger logger = Logger.getLogger(ExceptionAdvice.class.getName());
+    private static final Logger logger = Logger.getLogger(ExceptionAdvice.class.getName());
     @ExceptionHandler(InvalidParametersException.class)
-    public ResponseEntity<ErrorData> ExceptionInvalidParametersHandler(InvalidParametersException e){
+    public ResponseEntity<ErrorData> exceptionInvalidParametersHandler(InvalidParametersException e){
         logger.info("InvalidParametersException thrown");
         ErrorData errorData = new ErrorData(e.getMessage());
         return ResponseEntity
@@ -21,7 +21,7 @@ public class ExceptionAdvice {
                 .body(errorData);
     }
     @ExceptionHandler(NumberFormatException.class)
-    public ResponseEntity<ErrorData> ExceptionsNumberFormatHandler(NumberFormatException e){
+    public ResponseEntity<ErrorData> exceptionsNumberFormatHandler(NumberFormatException e){
         logger.info("NumberFormatException thrown");
         ErrorData errorData = new ErrorData("Length/Height value is not a number - cannot convert to integer");
         return ResponseEntity

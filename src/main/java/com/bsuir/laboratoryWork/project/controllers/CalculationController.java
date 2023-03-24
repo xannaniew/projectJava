@@ -4,7 +4,9 @@ import com.bsuir.laboratoryWork.project.model.ParametersKey;
 import com.bsuir.laboratoryWork.project.service.CachingService;
 import com.bsuir.laboratoryWork.project.service.CalculationService;
 import com.bsuir.laboratoryWork.project.model.CalculationResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.logging.Logger;
 
@@ -17,7 +19,7 @@ public class CalculationController {
         this.calculationService = calculationService;
         this.cachingService = cachingService;
     }
-    @GetMapping("/{length}/{height}")
+    @GetMapping("/{length}:{height}") // parameters on the same level, divided by :
     public CalculationResult Calculation(@PathVariable String length, @PathVariable String height) {
         logger.info("Received parameters: length = " + length + " height = " + height);
 
@@ -26,23 +28,21 @@ public class CalculationController {
             logger.info("received result from cache");
             return cachingService.getResultByKey(parametersKey);
         }
-        else if(cachingService.contains(new ParametersKey(parametersKey.getHeight(),parametersKey.getLength()))) {
-            logger.info("received result from cache");
+        else if(cachingService.contains(new ParametersKey(parametersKey.getHeight(),parametersKey.getLength()))) { // check that cache does not contain equivalent
+            logger.info("received result from cache");                                                        // params pairs: for example
+                                                                                                                   // key = [2,5] and key = [5,2]
+                                                                                                                   // their results are same: [14,10]
             return cachingService.getResultByKey(new ParametersKey(parametersKey.getHeight(), parametersKey.getLength()));
         }
-        else
+        else {
             logger.info("No such key in cache");
+        }
 
-        String perimeter = calculationService.calcPerimeter(parametersKey);
-        String square = calculationService.calcSquare(parametersKey);
+        CalculationResult calculationResult = new CalculationResult(calculationService.calcPerimeter(parametersKey),calculationService.calcSquare(parametersKey));
 
-        logger.info("Calculation results: perimeter = " + perimeter + " square = " + square);
-
-        CalculationResult calculationResult = new CalculationResult(perimeter,square);
+        logger.info("Calculation results: perimeter = " + calculationResult.getPerimeter() + " square = " + calculationResult.getSquare());
 
         cachingService.addResult(parametersKey,calculationResult);
-
-        System.out.println(CachingService.getCalculationHashMap());
 
         return calculationResult;
     }

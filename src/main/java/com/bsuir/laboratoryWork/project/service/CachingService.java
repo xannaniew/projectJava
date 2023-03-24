@@ -7,9 +7,15 @@ import org.springframework.web.context.annotation.ApplicationScope;
 
 import java.util.HashMap;
 @Service
-@ApplicationScope
+@ApplicationScope // extend bin's scope to the whole application, meaning that it would be accessible for all requests from all clients
 public class CachingService {
     private static final HashMap<ParametersKey, CalculationResult> calculationHashMap = new HashMap<>();
+    public CachingService(){
+
+    }
+    public CachingService(ParametersKey parametersKey, CalculationResult calculationResult){
+        this.addResult(parametersKey,calculationResult);
+    }
     public boolean contains(ParametersKey parametersKey) {
         return calculationHashMap.containsKey(parametersKey);
     }
