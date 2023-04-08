@@ -2,9 +2,11 @@ package com.bsuir.laboratoryWork.project.service;
 
 import com.bsuir.laboratoryWork.project.exceptions.InvalidParametersException;
 import com.bsuir.laboratoryWork.project.model.ParametersKey;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class CalculationService {
     public String calcPerimeter(ParametersKey parametersKey) throws NumberFormatException{
         if(Integer.parseInt(parametersKey.getLength()) <= 0 || Integer.parseInt(parametersKey.getHeight()) <=0)

@@ -20,8 +20,8 @@ public class ParametersKey {
         }
 
         ParametersKey key = (ParametersKey) o;
-        return Objects.equals(length, key.length) &&
-                Objects.equals(height, key.height);
+        return ((Objects.equals(length, key.length) && Objects.equals(height, key.height)) ||
+                (Objects.equals(length,key.height) && Objects.equals(height,key.length)));
     }
 
     @Override
