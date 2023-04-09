@@ -23,7 +23,7 @@ public class CalculationController {
     }
     @GetMapping("/{length}:{height}") // parameters on the same level, divided by :
     public CalculationResult calculation(@PathVariable String length, @PathVariable String height) {
-        callCountService.incrementCounter();
+        callCountService.incrementCountAndReturnValue();
 
         log.info("Received parameters: length = " + length + " height = " + height);
 
@@ -36,7 +36,7 @@ public class CalculationController {
             log.trace("No such key in cache");
         }
 
-        CalculationResult calculationResult = new CalculationResult(calculationService.calcPerimeter(parametersKey),calculationService.calcSquare(parametersKey));
+        CalculationResult calculationResult = calculationService.calcAndBuildResult(parametersKey);
         log.info("Calculation results: perimeter = " + calculationResult.getPerimeter() + " square = " + calculationResult.getSquare());
 
         cachingService.addResult(parametersKey,calculationResult);
@@ -45,6 +45,6 @@ public class CalculationController {
     }
     @GetMapping("/count")
     public int count(){
-        return callCountService.incrementCounter();
+        return callCountService.incrementCountAndReturnValue();
     }
 }

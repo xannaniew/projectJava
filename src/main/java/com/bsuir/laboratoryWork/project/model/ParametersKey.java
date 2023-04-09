@@ -26,7 +26,9 @@ public class ParametersKey {
 
     @Override
     public int hashCode() {
-        return Objects.hash(length,height);
+        int sum = Integer.parseInt(length) + Integer.parseInt(height);
+        int diff = Integer.parseInt(length) ^ Integer.parseInt(height); // симметрическая разница
+        return sum * diff;
     }
 
     @Override

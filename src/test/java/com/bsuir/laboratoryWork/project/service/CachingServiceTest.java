@@ -8,17 +8,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CachingServiceTest {
+    private CachingService cachingService;
+    private ParametersKey parametersKey;
+    private CalculationResult calculationResult;
+
+    public void setUp(String length, String height, String perimeter, String square, boolean is_addCache){
+        parametersKey = new ParametersKey(length, height);
+        calculationResult = new CalculationResult(perimeter, square);
+        cachingService = new CachingService();
+        if(is_addCache)
+            cachingService.addResult(parametersKey,calculationResult);
+    }
 
     @Test
     void containsAddedResultAndKey() {
-        CachingService cachingService = new CachingService(new ParametersKey("5","10"),new CalculationResult("30","50"));
+        setUp("5","10","30","50",true);
         ParametersKey newParametersKey = new ParametersKey("5","10");
         assertTrue(cachingService.contains(newParametersKey));
     }
     @Test
     void getResultByKeyReturnsAddedValueWithNewEqualKey(){
-        CalculationResult calculationResult = new CalculationResult("30","50");
-        CachingService cachingService = new CachingService(new ParametersKey("5","10"),calculationResult);
+        setUp("5","10","30","50",true);
         ParametersKey newParametersKey = new ParametersKey("5","10");
         assertEquals(calculationResult,cachingService.getResultByKey(newParametersKey));
     }

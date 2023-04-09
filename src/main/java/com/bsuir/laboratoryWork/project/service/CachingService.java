@@ -13,9 +13,6 @@ public class CachingService {
     public CachingService(){
 
     }
-    public CachingService(ParametersKey parametersKey, CalculationResult calculationResult){
-        this.addResult(parametersKey,calculationResult);
-    }
     public boolean contains(ParametersKey parametersKey) {
         return calculationHashMap.containsKey(parametersKey);
     }

@@ -10,49 +10,24 @@ class CalculationServiceTest {
     @Test
     void calcPerimeterFiveLengthFourHeightEqualsTwenty(){
         CalculationService calculationService = new CalculationService();
-        ParametersKey parametersKey = new ParametersKey("5","4");
-        assertEquals("18",calculationService.calcPerimeter(parametersKey));
+        assertEquals("18",calculationService.calcPerimeter(5,4));
     }
     @Test
-    void calcPerimeterNegativeOneLengthThrowsInvalidParametersException() {
+    void calcAndBuildResultrNegativeOneLengthThrowsInvalidParametersException() {
         CalculationService calculationService = new CalculationService();
         ParametersKey parametersKey = new ParametersKey("-1","1");
-        assertThrows(InvalidParametersException.class,() -> calculationService.calcPerimeter(parametersKey));
+        assertThrows(InvalidParametersException.class,() -> calculationService.calcAndBuildResult(parametersKey));
     }
     @Test
-    void calcPerimeterSymbolHeightThrowsNumberFormatException(){
+    void calcAndBuildResultSymbolHeightThrowsNumberFormatException(){
         CalculationService calculationService = new CalculationService();
         ParametersKey parametersKey = new ParametersKey("1","A");
-        assertThrows(NumberFormatException.class,() -> calculationService.calcPerimeter(parametersKey));
+        assertThrows(NumberFormatException.class,() -> calculationService.calcAndBuildResult(parametersKey));
     }
     @Test
-    void calcPerimeterZeroLengthThrowsInvalidParametersException(){
+    void calcAndBuildResultZeroLengthThrowsInvalidParametersException(){
         CalculationService calculationService = new CalculationService();
         ParametersKey parametersKey = new ParametersKey("0","1");
-        assertThrows(InvalidParametersException.class,() ->calculationService.calcPerimeter(parametersKey));
-    }
-    @Test
-    void calcSquareFourLengthTwoHeightEqualsEight(){
-        CalculationService calculationService = new CalculationService();
-        ParametersKey parametersKey = new ParametersKey("4","2");
-        assertEquals("8",calculationService.calcSquare(parametersKey));
-    }
-    @Test
-    void calcSquareNegativeOneHeightThrowsInvalidParametersException() {
-        CalculationService calculationService = new CalculationService();
-        ParametersKey parametersKey = new ParametersKey("1","-1");
-        assertThrows(InvalidParametersException.class,() -> calculationService.calcSquare(parametersKey));
-    }
-    @Test
-    void calcSquareSymbolLengthThrowsNumberFormatException(){
-        CalculationService calculationService = new CalculationService();
-        ParametersKey parametersKey = new ParametersKey("A","1");
-        assertThrows(NumberFormatException.class,() ->calculationService.calcSquare(parametersKey));
-    }
-    @Test
-    void calcSquareZeroHeightThrowsInvalidParametersException(){
-        CalculationService calculationService = new CalculationService();
-        ParametersKey parametersKey = new ParametersKey("1","0");
-        assertThrows(InvalidParametersException.class,() ->calculationService.calcSquare(parametersKey));
+        assertThrows(InvalidParametersException.class,() ->calculationService.calcAndBuildResult(parametersKey));
     }
 }
