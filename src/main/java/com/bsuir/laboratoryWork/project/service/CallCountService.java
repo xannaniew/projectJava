@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 public class CallCountService {
     private final Object mutex = new Object();
     private static int counter = 0;
-    synchronized public int incrementCountAndReturnValue(){
+    public int incrementCountAndReturnValue(){
         synchronized (mutex){
         counter++;
         log.info("count = " + counter);

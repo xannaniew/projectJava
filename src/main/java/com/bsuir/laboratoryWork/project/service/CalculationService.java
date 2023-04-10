@@ -17,12 +17,10 @@ public class CalculationService {
         }
         return new CalculationResult(calcPerimeter(length,height),calcSquare(length,height));
     }
-    public String calcPerimeter(int length, int height){
-        int perimeter = 2 * length + 2 * height;
-        return Integer.toString(perimeter);
+    public int calcPerimeter(int length, int height){
+        return 2 * length + 2 * height;
     }
-    public String calcSquare(int length, int height){
-        int square = length * height;
-        return Integer.toString(square);
+    public int calcSquare(int length, int height){
+        return length * height;
     }
 }

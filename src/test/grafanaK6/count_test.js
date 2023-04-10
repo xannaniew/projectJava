@@ -8,6 +8,6 @@ export let options = {
 };
 
 export default function () {
-  http.get(`http://localhost:8080/count`); // отправляем GET-запрос
+  http.get(`http://localhost:8080/1:1`); // отправляем GET-запрос
   sleep(1);
 }
