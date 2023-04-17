@@ -59,30 +59,41 @@ public class CalculationController {
         List<CalculationResult> responseList = new ArrayList<>();
 
         requestList.stream().forEach(currentElement -> log.debug("Received pair { " + currentElement.getLength() + " ; " + currentElement.getHeight() + " }"));
-        requestList.stream().forEach(currentElement -> {
-            if(cachingService.contains(currentElement)){
-                log.debug("received result from cache");
-                responseList.add(cachingService.getResultByKey(currentElement));
-            }
-            else{
-                log.debug("no such key in cache");
-                CalculationResult calculationResult = calculationService.calcAndBuildResult(currentElement);
-                responseList.add(calculationResult);
-                cachingService.addResult(currentElement,responseList.get(responseList.indexOf(calculationResult)));
-            }
-        });
+
+        requestList.stream()
+                .filter(currentElement -> cachingService.contains(currentElement))
+                .forEach(currentElement ->
+                {
+                    log.debug("received result from cache");
+                    responseList.add(cachingService.getResultByKey(currentElement));
+                });
+
+        requestList.stream()
+                .filter(currentElement -> !cachingService.contains(currentElement))
+                .forEach(currentElement ->
+                {
+                    log.debug("no such key in cache");
+                    CalculationResult calculationResult = calculationService.calcAndBuildResult(currentElement);
+                    responseList.add(calculationResult);
+                    cachingService.addResult(currentElement,responseList.get(responseList.indexOf(calculationResult)));
+                });
 
         Comparator<CalculationResult> perimeterComparator = (left, right) -> left.getPerimeter() - right.getPerimeter();
-        Optional<CalculationResult> maxPerimeterObject = responseList.stream().max(perimeterComparator);
-        int maxPerimeter = maxPerimeterObject.get().getPerimeter();
+        int maxPerimeter = responseList.stream()
+                .max(perimeterComparator)
+                .get()
+                .getPerimeter();
 
         Comparator<CalculationResult> squareComparator = (left, right) -> left.getSquare() - right.getSquare();
-        Optional<CalculationResult> minSquareObject = responseList.stream().min(squareComparator);
-        int minSquare = minSquareObject.get().getSquare();
+        int minSquare = responseList.stream()
+                .min(squareComparator)
+                .get()
+                .getSquare();
 
-        OptionalDouble averageResultObject = responseList.stream().mapToInt(obj -> obj.getPerimeter() + obj.getSquare()).average();
-
-        double averageResult = averageResultObject.getAsDouble();
+        double averageResult = responseList.stream()
+                .mapToInt(obj -> obj.getPerimeter() + obj.getSquare())
+                .average()
+                .getAsDouble();
 
         return new ResponseEntity<>("Result: " + responseList + "\nmaxPerimeter: " + maxPerimeter + "\nminSquare: " + minSquare + "\naverageResult: " + averageResult,HttpStatus.OK);
     }
