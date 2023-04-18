@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 
 import java.util.*;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 @RestController
 @Slf4j
@@ -78,22 +80,26 @@ public class CalculationController {
                     cachingService.addResult(currentElement,responseList.get(responseList.indexOf(calculationResult)));
                 });
 
+        Supplier<CalculationResult> defaultCalculationResult = () -> new CalculationResult(0,0);
+
         Comparator<CalculationResult> perimeterComparator = (left, right) -> left.getPerimeter() - right.getPerimeter();
+
         int maxPerimeter = responseList.stream()
                 .max(perimeterComparator)
-                .get()
+                .orElseGet(defaultCalculationResult)
                 .getPerimeter();
 
         Comparator<CalculationResult> squareComparator = (left, right) -> left.getSquare() - right.getSquare();
         int minSquare = responseList.stream()
                 .min(squareComparator)
-                .get()
+                .orElseGet(defaultCalculationResult)
                 .getSquare();
 
+        DoubleSupplier defaultAverageResult = () -> 0.0;
         double averageResult = responseList.stream()
                 .mapToInt(obj -> obj.getPerimeter() + obj.getSquare())
                 .average()
-                .getAsDouble();
+                .orElseGet(defaultAverageResult);
 
         return new ResponseEntity<>("Result: " + responseList + "\nmaxPerimeter: " + maxPerimeter + "\nminSquare: " + minSquare + "\naverageResult: " + averageResult,HttpStatus.OK);
     }
