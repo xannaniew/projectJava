@@ -1,6 +1,7 @@
 package com.bsuir.laboratoryWork.project.controllers;
 
 import com.bsuir.laboratoryWork.project.model.ParametersKey;
+import com.bsuir.laboratoryWork.project.service.BulkCalculationService;
 import com.bsuir.laboratoryWork.project.service.CachingService;
 import com.bsuir.laboratoryWork.project.service.CalculationService;
 import com.bsuir.laboratoryWork.project.model.CalculationResult;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 
 import java.util.*;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 @RestController
 @Slf4j
@@ -24,10 +23,12 @@ public class CalculationController {
     private final CalculationService calculationService;
     private final CachingService cachingService;
     private final CallCountService callCountService;
-    public CalculationController(CalculationService calculationService,CachingService cachingService, CallCountService callCountService){
+    private final BulkCalculationService bulkCalculationService;
+    public CalculationController(CalculationService calculationService,CachingService cachingService, CallCountService callCountService,BulkCalculationService bulkCalculationService){
         this.calculationService = calculationService;
         this.cachingService = cachingService;
         this.callCountService = callCountService;
+        this.bulkCalculationService = bulkCalculationService;
     }
     @GetMapping("/{length}:{height}") // parameters on the same level, divided by :
     public CalculationResult calculation(@PathVariable String length, @PathVariable String height) {
@@ -80,27 +81,8 @@ public class CalculationController {
                     cachingService.addResult(currentElement,responseList.get(responseList.indexOf(calculationResult)));
                 });
 
-        Supplier<CalculationResult> defaultCalculationResult = () -> new CalculationResult(0,0);
-
-        Comparator<CalculationResult> perimeterComparator = (left, right) -> left.getPerimeter() - right.getPerimeter();
-
-        int maxPerimeter = responseList.stream()
-                .max(perimeterComparator)
-                .orElseGet(defaultCalculationResult)
-                .getPerimeter();
-
-        Comparator<CalculationResult> squareComparator = (left, right) -> left.getSquare() - right.getSquare();
-        int minSquare = responseList.stream()
-                .min(squareComparator)
-                .orElseGet(defaultCalculationResult)
-                .getSquare();
-
-        DoubleSupplier defaultAverageResult = () -> 0.0;
-        double averageResult = responseList.stream()
-                .mapToInt(obj -> obj.getPerimeter() + obj.getSquare())
-                .average()
-                .orElseGet(defaultAverageResult);
-
-        return new ResponseEntity<>("Result: " + responseList + "\nmaxPerimeter: " + maxPerimeter + "\nminSquare: " + minSquare + "\naverageResult: " + averageResult,HttpStatus.OK);
+        return new ResponseEntity<>("Result: " + responseList + "\nmaxPerimeter: "
+                + bulkCalculationService.findMaxByPerimeter(responseList) + "\nminSquare: "
+                + bulkCalculationService.findMinBySquare(responseList) + "\naverageResult: " + bulkCalculationService.calcAverageResult(responseList),HttpStatus.OK);
     }
 }
