@@ -3,9 +3,9 @@ package com.bsuir.laboratoryWork.project.model;
 import java.util.Objects;
 
 public class ParametersKey {
-    private String length;
-    private String height;
-    public ParametersKey(String length, String height){
+    private int length;
+    private int height;
+    public ParametersKey(int length, int height){
         this.height = height;
         this.length = length;
     }
@@ -26,8 +26,8 @@ public class ParametersKey {
 
     @Override
     public int hashCode() {
-        int sum = Integer.parseInt(length) + Integer.parseInt(height);
-        int diff = Integer.parseInt(length) ^ Integer.parseInt(height); // симметрическая разница
+        int sum = length + height;
+        int diff = length ^ height; // симметрическая разница
         return sum * diff;
     }
 
@@ -37,10 +37,10 @@ public class ParametersKey {
         return "HashCode[ " + this.hashCode() + " ]";
     }
 
-    public String getHeight() {
+    public int getHeight() {
         return height;
     }
-    public String getLength() {
+    public int getLength() {
         return length;
     }
 }

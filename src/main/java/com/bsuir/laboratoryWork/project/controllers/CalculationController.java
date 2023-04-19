@@ -1,11 +1,8 @@
 package com.bsuir.laboratoryWork.project.controllers;
 
 import com.bsuir.laboratoryWork.project.model.ParametersKey;
-import com.bsuir.laboratoryWork.project.service.BulkCalculationService;
-import com.bsuir.laboratoryWork.project.service.CachingService;
-import com.bsuir.laboratoryWork.project.service.CalculationService;
+import com.bsuir.laboratoryWork.project.service.*;
 import com.bsuir.laboratoryWork.project.model.CalculationResult;
-import com.bsuir.laboratoryWork.project.service.CallCountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,11 +21,14 @@ public class CalculationController {
     private final CachingService cachingService;
     private final CallCountService callCountService;
     private final BulkCalculationService bulkCalculationService;
-    public CalculationController(CalculationService calculationService,CachingService cachingService, CallCountService callCountService,BulkCalculationService bulkCalculationService){
+    private final ParametersProcessingService parametersProcessingService;
+    public CalculationController(CalculationService calculationService,CachingService cachingService, CallCountService callCountService,BulkCalculationService bulkCalculationService,
+                                 ParametersProcessingService parametersProcessingService){
         this.calculationService = calculationService;
         this.cachingService = cachingService;
         this.callCountService = callCountService;
         this.bulkCalculationService = bulkCalculationService;
+        this.parametersProcessingService = parametersProcessingService;
     }
     @GetMapping("/{length}:{height}") // parameters on the same level, divided by :
     public CalculationResult calculation(@PathVariable String length, @PathVariable String height) {
@@ -36,7 +36,7 @@ public class CalculationController {
 
         log.info("Received parameters: length = " + length + " height = " + height);
 
-        ParametersKey parametersKey = new ParametersKey(length,height);
+        ParametersKey parametersKey = new ParametersKey(parametersProcessingService.convertToInt(length),parametersProcessingService.convertToInt(height));
         if(cachingService.contains(parametersKey)){
             log.trace("received result from cache");
             return cachingService.getResultByKey(parametersKey);
