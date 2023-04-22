@@ -12,7 +12,7 @@ class CachingServiceTest {
     private ParametersKey parametersKey;
     private CalculationResult calculationResult;
 
-    public void setUp(String length, String height, int perimeter, int square, boolean is_addCache){
+    public void setUp(int length, int height, int perimeter, int square, boolean is_addCache){
         parametersKey = new ParametersKey(length, height);
         calculationResult = new CalculationResult(perimeter, square);
         cachingService = new CachingService();
@@ -22,14 +22,14 @@ class CachingServiceTest {
 
     @Test
     void containsAddedResultAndKey() {
-        setUp("5","10",30,50,true);
-        ParametersKey newParametersKey = new ParametersKey("5","10");
+        setUp(5,10,30,50,true);
+        ParametersKey newParametersKey = new ParametersKey(5,10);
         assertTrue(cachingService.contains(newParametersKey));
     }
     @Test
     void getResultByKeyReturnsAddedValueWithNewEqualKey(){
-        setUp("5","10",30,50,true);
-        ParametersKey newParametersKey = new ParametersKey("5","10");
+        setUp(5,10,30,50,true);
+        ParametersKey newParametersKey = new ParametersKey(5,10);
         assertEquals(calculationResult,cachingService.getResultByKey(newParametersKey));
     }
 }

@@ -1,13 +1,21 @@
 package com.bsuir.laboratoryWork.project.model;
 
-import java.util.Objects;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
-public class ParametersKey {
-    private int length;
-    private int height;
+import java.io.Serializable;
+import java.util.Objects;
+@Embeddable
+public class ParametersKey implements Serializable {
+    @Column(name = "rectangleLength", nullable = false)
+    private int rectangleLength;
+    @Column(name = "rectangleHeight", nullable = false)
+    private int rectangleHeight;
     public ParametersKey(int length, int height){
-        this.height = height;
-        this.length = length;
+        this.rectangleHeight = height;
+        this.rectangleLength = length;
+    }
+    public ParametersKey(){
     }
 
     @Override
@@ -20,27 +28,32 @@ public class ParametersKey {
         }
 
         ParametersKey key = (ParametersKey) o;
-        return ((Objects.equals(length, key.length) && Objects.equals(height, key.height)) ||
-                (Objects.equals(length,key.height) && Objects.equals(height,key.length)));
+        return ((Objects.equals(rectangleLength, key.rectangleLength) && Objects.equals(rectangleHeight, key.rectangleHeight)) ||
+                (Objects.equals(rectangleLength,key.rectangleHeight) && Objects.equals(rectangleHeight,key.rectangleLength)));
     }
 
     @Override
     public int hashCode() {
-        int sum = length + height;
-        int diff = length ^ height; // симметрическая разница
+        int sum = rectangleLength + rectangleHeight;
+        int diff = rectangleLength ^ rectangleHeight; // симметрическая разница
         return sum * diff;
     }
 
     @Override
     public String toString() {
-//        return ("KEY =[length = " + length + "; height = " + height + ']');
-        return "HashCode[ " + this.hashCode() + " ]";
+        return "[ " + rectangleLength + " " + rectangleHeight + " ]";
     }
 
-    public int getHeight() {
-        return height;
+    public int getRectangleHeight() {
+        return rectangleHeight;
     }
-    public int getLength() {
-        return length;
+    public int getRectangleLength() {
+        return rectangleLength;
+    }
+    public void setRectangleHeight(int height) {
+        this.rectangleHeight = height;
+    }
+    public void setRectangleLength(int length) {
+        this.rectangleLength = length;
     }
 }

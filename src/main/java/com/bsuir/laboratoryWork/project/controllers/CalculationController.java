@@ -1,15 +1,12 @@
 package com.bsuir.laboratoryWork.project.controllers;
 
+import com.bsuir.laboratoryWork.project.model.CalculationData;
 import com.bsuir.laboratoryWork.project.model.ParametersKey;
 import com.bsuir.laboratoryWork.project.service.*;
 import com.bsuir.laboratoryWork.project.model.CalculationResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import java.util.*;
@@ -22,13 +19,15 @@ public class CalculationController {
     private final CallCountService callCountService;
     private final BulkCalculationService bulkCalculationService;
     private final ParametersProcessingService parametersProcessingService;
+    private final CalculationDataService dataService;
     public CalculationController(CalculationService calculationService,CachingService cachingService, CallCountService callCountService,BulkCalculationService bulkCalculationService,
-                                 ParametersProcessingService parametersProcessingService){
+                                 ParametersProcessingService parametersProcessingService, CalculationDataService dataService){
         this.calculationService = calculationService;
         this.cachingService = cachingService;
         this.callCountService = callCountService;
         this.bulkCalculationService = bulkCalculationService;
         this.parametersProcessingService = parametersProcessingService;
+        this.dataService = dataService;
     }
     @GetMapping("/{length}:{height}") // parameters on the same level, divided by :
     public CalculationResult calculation(@PathVariable String length, @PathVariable String height) {
@@ -61,7 +60,7 @@ public class CalculationController {
 
         List<CalculationResult> responseList = new ArrayList<>();
 
-        requestList.stream().forEach(currentElement -> log.debug("Received pair { " + currentElement.getLength() + " ; " + currentElement.getHeight() + " }"));
+        requestList.stream().forEach(currentElement -> log.debug("Received pair { " + currentElement.getRectangleLength() + " ; " + currentElement.getRectangleHeight() + " }"));
 
         requestList.stream()
                 .filter(currentElement -> cachingService.contains(currentElement))
@@ -84,5 +83,19 @@ public class CalculationController {
         return new ResponseEntity<>("Result: " + responseList + "\nmaxPerimeter: "
                 + bulkCalculationService.findMaxByPerimeter(responseList) + "\nminSquare: "
                 + bulkCalculationService.findMinBySquare(responseList) + "\naverageResult: " + bulkCalculationService.calcAverageResult(responseList),HttpStatus.OK);
+    }
+    @PostMapping("/repository/add")
+    public void addNewCalculationData(@RequestBody CalculationData data){
+        log.info("data: " + data.getId().getRectangleLength() + ' ' + data.getId().getRectangleHeight() + ' ' + data.getRectanglePerimeter() + ' ' + data.getRectangleSquare() + " id:" + data.getId().toString());
+        dataService.addNewCalculationData(data);
+    }
+    @GetMapping("/repository/getAll")
+    public @ResponseBody Iterable<CalculationData> getAllDataFromRepository(){
+        return dataService.getAllData();
+    }
+    @DeleteMapping("/repository/delete")
+    public void deleteCalculationData(@RequestBody CalculationData data){
+        log.info("data delete: " + data.getId().getRectangleLength() + ' ' + data.getId().getRectangleHeight() + ' ' + data.getRectanglePerimeter() + ' ' + data.getRectangleSquare() + " id:" + data.getId().toString());
+        dataService.deleteCalculationData(data);
     }
 }
