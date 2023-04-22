@@ -49,6 +49,8 @@ public class CalculationController {
 
         cachingService.addResult(parametersKey,calculationResult);
 
+        dataService.addNewCalculationData(new CalculationData(parametersKey,calculationResult.getPerimeter(),calculationResult.getSquare()));
+
         return calculationResult;
     }
     @GetMapping("/count")
