@@ -9,6 +9,7 @@ import java.util.Objects;
 public class CalculationData implements Serializable/*, Persistable<ParametersKey>*/ {
     @EmbeddedId
     private ParametersKey id;
+
     public CalculationData(){}
     public CalculationData(ParametersKey id, int rectanglePerimeter, int rectangleSquare){
         this.id = id;

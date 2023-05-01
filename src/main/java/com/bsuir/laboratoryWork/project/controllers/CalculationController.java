@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @Slf4j
@@ -20,14 +21,16 @@ public class CalculationController {
     private final BulkCalculationService bulkCalculationService;
     private final ParametersProcessingService parametersProcessingService;
     private final CalculationDataService dataService;
+    private final AsyncService asyncService;
     public CalculationController(CalculationService calculationService,CachingService cachingService, CallCountService callCountService,BulkCalculationService bulkCalculationService,
-                                 ParametersProcessingService parametersProcessingService, CalculationDataService dataService){
+                                 ParametersProcessingService parametersProcessingService, CalculationDataService dataService, AsyncService asyncService){
         this.calculationService = calculationService;
         this.cachingService = cachingService;
         this.callCountService = callCountService;
         this.bulkCalculationService = bulkCalculationService;
         this.parametersProcessingService = parametersProcessingService;
         this.dataService = dataService;
+        this.asyncService = asyncService;
     }
     @GetMapping("/{length}:{height}") // parameters on the same level, divided by :
     public CalculationResult calculation(@PathVariable String length, @PathVariable String height) {
@@ -95,9 +98,20 @@ public class CalculationController {
     public @ResponseBody Iterable<CalculationData> getAllDataFromRepository(){
         return dataService.getAllData();
     }
+    @GetMapping("repository/getById/{length}:{height}")
+    public CalculationData getDataById(@PathVariable String length, @PathVariable String height){
+        ParametersKey key = new ParametersKey(parametersProcessingService.convertToInt(length),parametersProcessingService.convertToInt(height));
+        return dataService.getCalculationDataById(key);
+    }
     @DeleteMapping("/repository/delete")
     public void deleteCalculationData(@RequestBody CalculationData data){
         log.info("data delete: " + data.getId().getRectangleLength() + ' ' + data.getId().getRectangleHeight() + ' ' + data.getRectanglePerimeter() + ' ' + data.getRectangleSquare() + " id:" + data.getId().toString());
         dataService.deleteCalculationData(data);
+    }
+    @GetMapping("/getAsync/{length}:{height}")
+    public ResponseEntity<?> getResAsync(@PathVariable String length, @PathVariable String height) throws InterruptedException, ExecutionException {
+        ParametersKey key = new ParametersKey(parametersProcessingService.convertToInt(length),parametersProcessingService.convertToInt(height));
+        asyncService.calcAndAddToRepAsync(key);
+        return new ResponseEntity<>("Data is being proceeded",HttpStatus.OK);
     }
 }

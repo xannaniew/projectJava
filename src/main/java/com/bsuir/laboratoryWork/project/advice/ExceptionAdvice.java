@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutionException;
 
 @RestControllerAdvice
 @Slf4j
@@ -35,6 +36,22 @@ public class ExceptionAdvice {
         ErrorData errorData = new ErrorData("POST bulk request has empty list");
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .body(errorData);
+    }
+    @ExceptionHandler(InterruptedException.class)
+    public ResponseEntity<ErrorData> exceptionInterruptedHandler(InterruptedException e){
+        log.info("InterruptedException thrown");
+        ErrorData errorData = new ErrorData("Failed to invoke thread sleep");
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(errorData);
+    }
+    @ExceptionHandler(ExecutionException.class)
+    public ResponseEntity<ErrorData> exceptionExecutionHandler(ExecutionException e){
+        log.info("ExecutionException thrown");
+        ErrorData errorData = new ErrorData("Failed to receive data from async operation");
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(errorData);
     }
 }
