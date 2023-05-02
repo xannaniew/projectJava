@@ -19,15 +19,25 @@ public class AsyncService {
     @Autowired
     private CalculationDataService calculationDataService;
     @Async
-    public CompletableFuture<CalculationData> calcResAsync(ParametersKey key) throws InterruptedException {
+    public CalculationData calcResAsync(ParametersKey key) throws InterruptedException {
+        log.info("began calculation");
         Thread.sleep(10000);
         CalculationResult calculationResult = calculationService.calcAndBuildResult(key);
+        log.info("calculation completed");
 
-        return new CompletableFuture<CalculationData>().completedFuture(new CalculationData(key,calculationResult.getPerimeter(),calculationResult.getSquare()));
+        return new CalculationData(key,calculationResult.getPerimeter(),calculationResult.getSquare());
     }
     @Async
-    public void calcAndAddToRepAsync(ParametersKey key) throws InterruptedException, ExecutionException {
-        CompletableFuture<CalculationData> completableFuture = calcResAsync(key);
+    public void calcAndAddToRepAsync(ParametersKey key) throws InterruptedException, ExecutionException, RuntimeException {
+        CompletableFuture<CalculationData> completableFuture = CompletableFuture.supplyAsync(()-> {
+            try {
+                return calcResAsync(key);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        log.info("waiting for calculation result");
         calculationDataService.addNewCalculationData(completableFuture.get());
+        log.info("added to repository");
     }
 }

@@ -112,6 +112,7 @@ public class CalculationController {
     public ResponseEntity<?> getResAsync(@PathVariable String length, @PathVariable String height) throws InterruptedException, ExecutionException {
         ParametersKey key = new ParametersKey(parametersProcessingService.convertToInt(length),parametersProcessingService.convertToInt(height));
         asyncService.calcAndAddToRepAsync(key);
-        return new ResponseEntity<>("Data is being proceeded",HttpStatus.OK);
+        log.info("received processing request");
+        return new ResponseEntity<>("Data is being proceeded; key:" + key,HttpStatus.ACCEPTED);
     }
 }
